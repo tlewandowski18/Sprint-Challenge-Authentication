@@ -6,6 +6,11 @@ const Users = require("./users-model")
 router.post('/register', async (req, res, next) => {
   try {
     const { username, password } = req.body
+    if (!username || !password) {
+      res.status(404).json({
+        message: "Please enter valid username and password"
+      })
+    }
     const user = await Users.findBy({username})
     if (user) {
       res.status(409).json({
@@ -24,7 +29,6 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body
     const user = await Users.findBy({username})
     const validPassword = await bcrypt.compare(password, user.password)
-    console.log(validPassword)
     if (!user || !validPassword) {
       res.status(401).json({
         message: "Invalid Credentials"
